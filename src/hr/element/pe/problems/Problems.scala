@@ -32,10 +32,12 @@ object Problem0002 extends Solveable{
         case true =>
           sum
         case false =>
-          val even = ( cur & 1 ) == 0
-          val newSum = if ( even ) sum + cur else sum
-
-          fibSumEven( cur + prev, cur, newSum, max )
+          fibSumEven(
+              cur = cur + prev,
+              prev = cur,
+              sum = if ( ( cur & 1 ) == 0 ) sum + cur else sum,
+              max = max
+          )
       }
     }
 
@@ -81,7 +83,29 @@ object Problem0004 extends Solveable{
   val NUMBER = 4
 
   def solve() = {
-    val res = "?"
+    def numPal( p: Long ) = p.toString == p.toString.reverse
+
+    def findMaxPal( from: Int, to: Int ) = {
+      val rng = from to to
+      ( for( x <- rng; y <- rng if numPal( x * y ) ) yield x * y ) max
+    }
+
+    val res = findMaxPal( 100, 999 )
+    String.valueOf( res )
+  }
+}
+
+/**
+  2520 is the smallest number that can be divided by each of the numbers from 1 to 10 without any remainder.
+  What is the smallest positive number that is evenly divisible by all of the numbers from 1 to 20?
+*/
+object Problem0005 extends Solveable{
+  val NUMBER = 5
+
+  def solve() = {
+    1 to 20 foreach println
+
+    val res = "aoe"
     String.valueOf( res )
   }
 }
