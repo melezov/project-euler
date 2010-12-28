@@ -25,13 +25,19 @@ class ProblemSuite extends Suite with MustMatchers{
   def test0006() {
     Problem0006.solve() must equal ("25164150")
   }
+  def test0007() {
+    Problem0007.solve() must equal ("104743")
+  }
+  def test0008() {
+    Problem0008.solve() must equal ("?")
+  }
 }
 
 object TestProblem{
   def main( args: Array[String] ) {
     val ps = new ProblemSuite
 
-    for ( i <- 1 to 6 )
+    for ( i <- 1 to 8 )
       ps.execute("test%04d" format i )
   }
 }
