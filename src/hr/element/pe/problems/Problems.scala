@@ -103,10 +103,72 @@ object Problem0005 extends Solveable{
   val NUMBER = 5
 
   def solve() = {
-    1 to 20 foreach println
 
-    val res = "aoe"
+    def getPrimCount( num: Int ) = {
+      @tailrec
+      def getPrim( n: Int, cur: Int ):List[Int] = {
+        cur match {
+          case x if ( x >= n ) =>
+            n :: Nil
+          case x if ( n % x == 0 ) =>
+            x :: getPrim( n / x, x )
+          case x =>
+            getPrim( n, x + 1 )
+        }
+      }
+
+      getPrim( num, 2 ) groupBy( identity ) mapValues( _.length )
+    }
+
+    def getMaxPrimCounts( r: Range ) =
+      r flatMap getPrimCount groupBy( _._1 ) mapValues( _.map(_._2).max )
+
+    val res = (getMaxPrimCounts( 1 to 20 ) map( ep => BigInt( ep._1 ).pow( ep._2 ) ) product)
     String.valueOf( res )
   }
 }
+
+/**
+  The sum of the squares of the first ten natural numbers is, 1^(2) + 2^(2) + ... + 10^(2) = 385
+  The square of the sum of the first ten natural numbers is, (1 + 2 + ... + 10)^(2) = 55^(2) = 3025
+  Hence the difference between the sum of the squares of the first ten natural numbers and the square of the sum is 3025 − 385 = 2640.
+  Find the difference between the sum of the squares of the first one hundred natural numbers and the square of the sum.
+*/
+object Problem0006 extends Solveable{
+  val NUMBER = 6
+
+  def solve() = {
+    val res = "?"
+    String.valueOf( res )
+  }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
