@@ -12,7 +12,7 @@ import hr.element.pe.problems._
 
 object RunProblem{
   def main( args: Array[String] ) {
-    println( Problem0012.solve() )
+    println( Problem0017.solve() )
   }
 }
 
