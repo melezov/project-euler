@@ -219,7 +219,7 @@ object Problem0008 extends Solveable{
       0588611646710940507754100225698315520005593572972571636269561882670428252483600823257530420752963450
     """.replaceAll( "\\D", "" )
 
-    val res = (num.toList.map(Character.digit(_,10)).sliding(5) map( _.product) max)
+    val res = (num.toList.map(Character.digit(_,10)).sliding(5).map( _.product).max)
     String.valueOf( res )
   }
 }
@@ -233,7 +233,18 @@ object Problem0009 extends Solveable{
   val NUMBER = 9
 
   def solve() = {
-    val res = "?"
+
+    def seekPit():Long = {
+      for(a<-1 to 1000;b<-a to 1000 if ( a + b < 1000 );c<-b to 1000) {
+        if ( ( a+b+c == 1000 ) && ( a*a + b*b == c*c ) ) return a*b*c
+      }
+
+      throw new RuntimeException("Solution not found!")
+    }
+
+    val t = System.currentTimeMillis
+    val res = seekPit()
+    println( System.currentTimeMillis - t )
     String.valueOf( res )
   }
 }

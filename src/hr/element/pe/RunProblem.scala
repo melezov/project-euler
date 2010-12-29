@@ -10,7 +10,7 @@ object Problems extends HashMap[Int,Solveable]
 
 import hr.element.pe.problems._
 
-object RunProblem {
+object RunProblem{
   def main( args: Array[String] ) {
     println( Problem0009.solve() )
   }
