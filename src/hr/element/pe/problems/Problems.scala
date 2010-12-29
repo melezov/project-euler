@@ -715,7 +715,146 @@ object Problem0017 extends Solveable{
   val NUMBER = 17
 
   def solve() = {
-    val res = "?"
+
+    val n1To19 = ",one,two,three,four,five,six,seven,eight,nine,ten" +
+                 ",eleven,twelve,thirteen,fourteen,fifteen,sixteen,seventeen,eighteen,nineteen" split ','
+    val n10To90 = ",ten,twenty,thirty,forty,fifty,sixty,seventy,eighty,ninety" split ','
+
+    def num2word( x: Int ) = {
+      val ones = x % 10
+      val ones20 = x % 20
+      val tens = ( x / 10 ) % 10
+      val hundreds = ( x / 100 ) % 10
+      val thousands = ( x / 1000 ) % 10
+
+      val s1000 = if ( thousands > 0 ){
+        n1To19(thousands) + " thousand"
+      }
+      else ""
+
+      val s100 = if ( hundreds > 0 ){
+        n1To19(hundreds) + " hundred"
+      }
+      else ""
+
+      val s10 = if ( tens > 1 ){
+        n10To90(tens)
+      }
+      else ""
+
+      val s1 = if ( tens == 1 ){
+        n1To19(ones20)
+      }
+      else if ( ones > 0 ){
+        n1To19( ones )
+      }
+      else ""
+
+      val and = if ( ( !s100.isEmpty ) && ( !s10.isEmpty || !s1.isEmpty ) ){
+        "and"
+      }
+      else ""
+
+      List( s1000, s100, and, s10, s1 ) mkString(" ") replaceAll( "\\s+", " " ) trim
+    }
+
+    val res = ((1 to 1000).map(num2word).map(_.toList.filter(_.isLetter ).length ) sum)
+    String.valueOf( res )
+  }
+}
+
+/**
+  By starting at the top of the triangle below and moving to adjacent numbers on the row below, the maximum total from top to bottom is 23.
+                [3]
+              [7]  4
+             2  [4]  6
+           8   5  [9]  3
+
+  That is, 3 + 7 + 4 + 9 = 23.
+
+  Find the maximum total from top to bottom of the triangle below:
+
+                                  75
+                                95  64
+                              17  47  82
+                            18  35  87  10
+                          20  04  82  47  65
+                        19  01  23  75  03  34
+                      88  02  77  73  07  63  67
+                    99  65  04  28  06  16  70  92
+                  41  41  26  56  83  40  80  70  33
+                41  48  72  33  47  32  37  16  94  29
+              53  71  44  65  25  43  91  52  97  51  14
+            70  11  33  28  77  73  17  78  39  68  17  57
+          91  71  52  38  17  14  91  43  58  50  27  29  48
+        63  66  04  68  89  53  67  30  73  16  69  87  40  31
+      04  62  98  27  23  09  70  98  73  93  38  53  60  04  23
+
+  NOTE: As there are only 16384 routes, it is possible to solve this problem by trying every route.
+  However, Problem 67, is the same challenge with a triangle containing one-hundred rows; it cannot
+  be solved by brute force, and requires a clever method! ;o)
+*/
+object Problem0018 extends Solveable{
+  val NUMBER = 18
+
+  case class Node( head: Int, left: Option[Node], right: Option[Node] ){
+    def isLeaf = ( left eq None ) || ( right eq None )
+  }
+
+  def asciiArtTriangle2NodeTree( aa: String ) = {
+    val l2d = aa.split( "[\\r\\n]+" ).map( _.trim ).filter( !_.isEmpty )
+                .map( _.split( " +" ).map(_.toInt) )
+
+    def buildTree( level: Int, offset: Int ):Node = level match {
+      case x if (x + 1 == l2d.length) =>
+        Node(
+            l2d(level)(offset),
+            None,
+            None
+        )
+      case _ =>
+        Node(
+            l2d(level)(offset),
+            Some( buildTree( level + 1, offset ) ),
+            Some( buildTree( level +1, offset + 1 ) )
+        )
+    }
+
+    buildTree( 0, 0 )
+  }
+
+  def solve() = {
+
+    val aaTri = """
+                                  75
+                                95  64
+                              17  47  82
+                            18  35  87  10
+                          20  04  82  47  65
+                        19  01  23  75  03  34
+                      88  02  77  73  07  63  67
+                    99  65  04  28  06  16  70  92
+                  41  41  26  56  83  40  80  70  33
+                41  48  72  33  47  32  37  16  94  29
+              53  71  44  65  25  43  91  52  97  51  14
+            70  11  33  28  77  73  17  78  39  68  17  57
+          91  71  52  38  17  14  91  43  58  50  27  29  48
+        63  66  04  68  89  53  67  30  73  16  69  87  40  31
+      04  62  98  27  23  09  70  98  73  93  38  53  60  04  23
+    """
+
+    def findBestPath( cur: Node ) = {
+      cur.head :: cur.left match {
+        case None =>
+          Nil
+        case Some( l ) =>
+
+      }
+    }
+
+    val root = asciiArtTriangle2NodeTree( aaTri )
+
+    val res = findBestPath( root )
     String.valueOf( res )
   }
 }
