@@ -32,15 +32,28 @@ class ProblemSuite extends Suite with MustMatchers{
     Problem0008.solve() must equal ("40824")
   }
   def test0009() {
-    Problem0009.solve() must equal ("?")
+    Problem0009.solve() must equal ("31875000")
+  }
+  def test0010() {
+    Problem0010.solve() must equal ("142913828922")
+  }
+  def test0011() {
+    Problem0011.solve() must equal ("70600674")
+  }
+  def test0012() {
+    Problem0012.solve() must equal ("?")
   }
 }
 
-object TestProblem{
+object TestProblems{
   def main( args: Array[String] ) {
     val ps = new ProblemSuite
 
-    for ( i <- 1 to 9 )
+    for ( i <- 1 to 9 ){
+      val oldTime = System.currentTimeMillis
       ps.execute("test%04d" format i )
+      val newTime = System.currentTimeMillis
+      println( "Finished in: " + (newTime - oldTime) + " ms" )
+    }
   }
 }
