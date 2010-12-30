@@ -62,7 +62,13 @@ class ProblemSuite extends Suite with MustMatchers{
     Problem0018.solve() must equal ("1704")
   }
   def test0019() {
-    Problem0019.solve() must equal ("100")
+    Problem0019.solve() must equal ("171")
+  }
+  def test0020() {
+    Problem0020.solve() must equal ("648")
+  }
+  def test0021() {
+    Problem0021.solve() must equal ("648")
   }
 }
 

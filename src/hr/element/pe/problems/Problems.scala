@@ -5,7 +5,7 @@ import hr.element.pe.Solveable
 import scala.annotation.tailrec
 import scala.collection.mutable.{ArrayBuffer, HashMap}
 
-import org.joda.time.LocalDate
+import org.joda.time.{LocalDate, DateTimeConstants}
 
 /**
   If we list all the natural numbers below 10 that are multiples of 3 or 5, we get 3, 5, 6 and 9.
@@ -700,8 +700,11 @@ object Problem0015 extends Solveable{
 object Problem0016 extends Solveable{
   val NUMBER = 16
 
+  def sumNumberDigits( x: BigInt ) =
+    x.toString.map(_.asDigit).sum
+
   def solve() = {
-    val res = (((BigInt(2) pow 1000 toString) map(_.asDigit)) sum)
+    val res = sumNumberDigits( BigInt(2) pow 1000 )
     String.valueOf( res )
   }
 }
@@ -899,12 +902,22 @@ object Problem0019 extends Solveable{
 
   def solve() = {
 
-    for ( year <- 1901 to 2000; month <- 1 to 12 ){
-      val ld = new LocalDate( year, month, 1 )
-      println( ld.getDayOfWeek )
-    }
+    val firstDays = for( year <- 1901 to 2000; month <- 1 to 12 ) yield new LocalDate( year, month, 1 )
+    val res = firstDays.count( _.getDayOfWeek == DateTimeConstants.SUNDAY )
+    String.valueOf( res )
+  }
+}
 
-    val res = "?"
+/**
+  n! means n * (n − 1) * ... * 3 * 2 * 1
+  Find the sum of the digits in the number 100!
+*/
+object Problem0020 extends Solveable{
+  val NUMBER = 20
+
+  def solve() = {
+
+    val res = Problem0016.sumNumberDigits( Problem0015.fact( 100 ) )
     String.valueOf( res )
   }
 }
