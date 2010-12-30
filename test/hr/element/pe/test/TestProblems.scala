@@ -7,7 +7,7 @@ import org.scalatest.matchers.MustMatchers
 import hr.element.pe.problems._
 
 class ProblemSuite extends Suite with MustMatchers{
-/*  def test0001() {
+  def test0001() {
     Problem0001.solve() must equal ("233168")
   }
   def test0002() {
@@ -58,8 +58,11 @@ class ProblemSuite extends Suite with MustMatchers{
   def test0017() {
     Problem0017.solve() must equal ("21124")
   }
-*/  def test0018() {
-    Problem0018.solve() must equal ("?")
+  def test0018() {
+    Problem0018.solve() must equal ("1704")
+  }
+  def test0019() {
+    Problem0019.solve() must equal ("100")
   }
 }
 

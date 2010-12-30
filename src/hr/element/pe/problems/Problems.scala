@@ -1,9 +1,11 @@
 package hr.element.pe.problems
 
 import hr.element.pe.Solveable
+
 import scala.annotation.tailrec
 import scala.collection.mutable.{ArrayBuffer, HashMap}
 
+import org.joda.time.LocalDate
 
 /**
   If we list all the natural numbers below 10 that are multiples of 3 or 5, we get 3, 5, 6 and 9.
@@ -797,30 +799,48 @@ object Problem0017 extends Solveable{
 object Problem0018 extends Solveable{
   val NUMBER = 18
 
-  case class Node( head: Int, left: Option[Node], right: Option[Node] ){
-    def isLeaf = ( left eq None ) || ( right eq None )
+  trait NodeLike{
+    val num:Int
+
+    val leftParent:Option[NodeLike]
+    val rightParent:Option[NodeLike]
+    val leftChild:Option[NodeLike]
+    val rightChild:Option[NodeLike]
+
+    def isRoot = ( leftParent eq None ) && ( rightParent eq None )
+    def isLeaf = ( leftChild eq None ) || ( rightChild eq None )
+
+    override def toString() =
+      "NodeLike(" + num +
+        ", lP:" + (if ( leftParent eq None ) None else Some( leftParent.get.num )) +
+        ", rP:" + (if ( rightParent eq None ) None else Some( rightParent.get.num )) +
+        ", lC:" + (if ( leftChild eq None ) None else Some( leftChild.get.num )) +
+        ", rC:" + (if ( rightChild eq None ) None else Some( rightChild.get.num )) + ")"
   }
 
   def asciiArtTriangle2NodeTree( aa: String ) = {
     val l2d = aa.split( "[\\r\\n]+" ).map( _.trim ).filter( !_.isEmpty )
-                .map( _.split( " +" ).map(_.toInt) )
+                .map( _.split( " +" ).map( _.toInt ) )
 
-    def buildTree( level: Int, offset: Int ):Node = level match {
-      case x if (x + 1 == l2d.length) =>
-        Node(
-            l2d(level)(offset),
-            None,
-            None
-        )
-      case _ =>
-        Node(
-            l2d(level)(offset),
-            Some( buildTree( level + 1, offset ) ),
-            Some( buildTree( level +1, offset + 1 ) )
-        )
+    val nodeMap = new HashMap[(Int,Int),Node]()
+
+    class Node( _num: Int, level: Int, offset: Int ) extends NodeLike{
+      val num = _num
+      lazy val leftParent:Option[Node] = nodeMap.get( level - 1, offset - 1 )
+      lazy val rightParent:Option[Node] = nodeMap.get( level - 1, offset )
+      lazy val leftChild:Option[Node] = nodeMap.get( level + 1, offset )
+      lazy val rightChild:Option[Node] = nodeMap.get( level + 1 , offset + 1 )
     }
 
-    buildTree( 0, 0 )
+    for ( level <- 0 until l2d.length ){
+      val l = l2d(level)
+      for ( offset <- 0 until l.length ){
+        val num = l(offset)
+        nodeMap((level,offset)) = new Node( num, level, offset )
+      }
+    }
+
+    nodeMap( 0, 0 )
   }
 
   def solve() = {
@@ -843,18 +863,48 @@ object Problem0018 extends Solveable{
       04  62  98  27  23  09  70  98  73  93  38  53  60  04  23
     """
 
-    def findBestPath( cur: Node ) = {
-      cur.head :: cur.left match {
-        case None =>
-          Nil
-        case Some( l ) =>
-
-      }
-    }
-
     val root = asciiArtTriangle2NodeTree( aaTri )
 
-    val res = findBestPath( root )
+    def findBestRoute( cur: NodeLike ): Int = cur.isLeaf match {
+      case true =>
+        cur.num
+      case false =>
+        cur.num + math.max(
+            findBestRoute( cur.leftChild.get ),
+            findBestRoute( cur.rightChild.get )
+        )
+    }
+
+    val res = findBestRoute( root )
+    String.valueOf( res )
+  }
+}
+
+/**
+  You are given the following information, but you may prefer to do some research for yourself.
+
+  - 1 Jan 1900 was a Monday.
+  - Thirty days has September,
+    April, June and November.
+    All the rest have thirty-one,
+    Saving February alone,
+    Which has twenty-eight, rain or shine.
+    And on leap years, twenty-nine.
+  - A leap year occurs on any year evenly divisible by 4, but not on a century unless it is divisible by 400.
+
+  How many Sundays fell on the first of the month during the twentieth century (1 Jan 1901 to 31 Dec 2000)?
+*/
+object Problem0019 extends Solveable{
+  val NUMBER = 19
+
+  def solve() = {
+
+    for ( year <- 1901 to 2000; month <- 1 to 12 ){
+      val ld = new LocalDate( year, month, 1 )
+      println( ld.getDayOfWeek )
+    }
+
+    val res = "?"
     String.valueOf( res )
   }
 }
