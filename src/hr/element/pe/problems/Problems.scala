@@ -1,11 +1,15 @@
 package hr.element.pe.problems
 
-import hr.element.pe.Solveable
-
 import scala.annotation.tailrec
 import scala.collection.mutable.{ArrayBuffer, HashMap}
+import scala.collection.immutable.{Vector, ListMap}
 
 import org.joda.time.{LocalDate, DateTimeConstants}
+
+import org.apache.commons.io.FileUtils
+import java.io.File
+
+import hr.element.pe.Solveable
 
 /**
   If we list all the natural numbers below 10 that are multiples of 3 or 5, we get 3, 5, 6 and 9.
@@ -128,7 +132,7 @@ object Problem0005 extends Solveable{
       }
     }
 
-    getPrim( num, 2 ) groupBy( identity ) mapValues( _.length )
+    ListMap.empty ++ getPrim( num, 2 ).groupBy( identity ).mapValues( _.length ).toList.sortBy( _._1 )
   }
 
   def solve() = {
@@ -918,6 +922,115 @@ object Problem0020 extends Solveable{
   def solve() = {
 
     val res = Problem0016.sumNumberDigits( Problem0015.fact( 100 ) )
+    String.valueOf( res )
+  }
+}
+
+/**
+  Let d(n) be defined as the sum of proper divisors of n (numbers less than n which divide evenly into n).
+  If d(a) = b and d(b) = a, where a != b, then a and b are an amicable pair and each of a and b are called amicable numbers.
+
+  For example, the proper divisors of 220 are 1, 2, 4, 5, 10, 11, 20, 22, 44, 55 and 110; therefore d(220) = 284.
+  The proper divisors of 284 are 1, 2, 4, 71 and 142; so d(284) = 220.
+
+  Evaluate the sum of all the amicable numbers under 10000.
+*/
+object Problem0021 extends Solveable{
+  val NUMBER = 21
+
+  def getProperDivisorSum( n: Int ) = {
+    if ( n < 2 ){
+      0
+    }
+    else{
+      val primCounts = Problem0005.getPrimCount( n )
+      primCounts.map{ case (p,c) => ( BigInt( p ).pow( c + 1 ) - 1 ) / ( p - 1 ) toInt }.product - n
+    }
+  }
+
+  def solve() = {
+
+    def calcAmicablePairSum( limit: Int ) = {
+      val dFunCache = (0 until limit).map( getProperDivisorSum )
+
+      (for ( index <- 1 until limit if {
+        val sum = dFunCache( index )
+        ( index != sum ) && ( sum < limit ) && ( dFunCache( sum ) == index )
+      }) yield index) sum
+    }
+
+    val res = calcAmicablePairSum( 10000 )
+    String.valueOf( res )
+  }
+}
+
+/**
+  Using names.txt, a 46K text file containing over five-thousand first names, begin by sorting it into alphabetical order.
+  Then working out the alphabetical value for each name, multiply this value by its alphabetical position in the list to obtain a name score.
+
+  For example, when the list is sorted into alphabetical order, COLIN, which is worth 3 + 15 + 12 + 9 + 14 = 53, is the 938th name in the list.
+  So, COLIN would obtain a score of 938 × 53 = 49714.
+
+  What is the total of all the name scores in the file?
+*/
+object Problem0022 extends Solveable{
+  val NUMBER = 22
+
+  def solve() = {
+
+    val namePattern = "^\"([A-Z]+)\"$".r
+
+    val names = FileUtils.readFileToString( new File( "res/Problem0022/names.txt" ) )
+      .split(',')
+      .toList
+      .map( namePattern.replaceFirstIn( _, "$1" ) )
+      .sortBy(identity)
+
+    def wordEval( word: String, pos: Int ) = {
+      word.map( _ - 'A' + 1 ).sum * pos
+    }
+
+    val res = names.view.zipWithIndex.map( kv => wordEval( kv._1, kv._2 + 1 ) ).sum
+    String.valueOf( res )
+  }
+}
+
+/**
+  A perfect number is a number for which the sum of its proper divisors is exactly equal to the number.
+  For example, the sum of the proper divisors of 28 would be 1 + 2 + 4 + 7 + 14 = 28, which means that 28 is a perfect number.
+
+  A number n is called deficient if the sum of its proper divisors is less than n and it is called abundant if this sum exceeds n.
+
+  As 12 is the smallest abundant number, 1 + 2 + 3 + 4 + 6 = 16, the smallest number that can be written as the sum of two abundant numbers is 24.
+  By mathematical analysis, it can be shown that all integers greater than 28123 can be written as the sum of two abundant numbers.
+  However, this upper limit cannot be reduced any further by analysis even though it is known that the greatest number that cannot be
+  expressed as the sum of two abundant numbers is less than this limit.
+
+  Find the sum of all the positive integers which cannot be written as the sum of two abundant numbers.
+*/
+object Problem0023 extends Solveable{
+  val NUMBER = 23
+
+  def solve() = {
+
+    def getNonAbundantSum( limit: Int ) = {
+      val abundants = Vector.empty ++ (1 to limit).filter( n => n < Problem0021.getProperDivisorSum( n ) )
+
+      val tests = 0 to limit toArray
+
+      for( a <- 0 until abundants.length ){
+        val xa = abundants(a)
+        for ( b <- a until abundants.length ){
+          val xb = abundants(b)
+          val sum = xa + xb
+          if ( sum <= limit ) tests( sum ) = 0
+        }
+      }
+
+      tests.sum
+    }
+
+    val res = getNonAbundantSum( 28123 )
     String.valueOf( res )
   }
 }

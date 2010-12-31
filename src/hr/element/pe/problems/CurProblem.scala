@@ -1,25 +1,35 @@
 package hr.element.pe.problems
 
+import scala.annotation.tailrec
 import hr.element.pe.Solveable
 
-import scala.annotation.tailrec
-import scala.collection.mutable.{ArrayBuffer, HashMap}
-
-import org.joda.time.{LocalDate, DateTimeConstants}
-
 /**
-  Let d(n) be defined as the sum of proper divisors of n (numbers less than n which divide evenly into n).
-  If d(a) = b and d(b) = a, where a != b, then a and b are an amicable pair and each of a and b are called amicable numbers.
+  A permutation is an ordered arrangement of objects. For example, 3124 is one possible permutation of the digits 1, 2, 3 and 4.
+  If all of the permutations are listed numerically or alphabetically, we call it lexicographic order.
 
-  For example, the proper divisors of 220 are 1, 2, 4, 5, 10, 11, 20, 22, 44, 55 and 110; therefore d(220) = 284.
-  The proper divisors of 284 are 1, 2, 4, 71 and 142; so d(284) = 220.
-
-  Evaluate the sum of all the amicable numbers under 10000.
+  The lexicographic permutations of 0, 1 and 2 are: 012 021 102 120 201 210
+  What is the millionth lexicographic permutation of the digits 0, 1, 2, 3, 4, 5, 6, 7, 8 and 9?
 */
-object Problem0021 extends Solveable{
-  val NUMBER = 21
+object Problem0024 extends Solveable{
+  val NUMBER = 24
 
   def solve() = {
+
+    def permute( list: Array[Char] ){
+
+      @tailrec
+      def maxAsc( pos: Int, max: Int ) = {
+
+      }
+
+      for( k <- 0 until list.length - 1 ){
+        if ( list(k) < list(k + 1) ){
+
+        }
+      }
+    }
+
+    permute( "0123456789".toCharArray )
 
     val res = "?"
     String.valueOf( res )
