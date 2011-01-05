@@ -3,35 +3,25 @@ package hr.element.pe.problems
 import scala.annotation.tailrec
 import hr.element.pe.Solveable
 
-/**
-  A permutation is an ordered arrangement of objects. For example, 3124 is one possible permutation of the digits 1, 2, 3 and 4.
-  If all of the permutations are listed numerically or alphabetically, we call it lexicographic order.
+import scala.collection.mutable.HashMap
 
-  The lexicographic permutations of 0, 1 and 2 are: 012 021 102 120 201 210
-  What is the millionth lexicographic permutation of the digits 0, 1, 2, 3, 4, 5, 6, 7, 8 and 9?
+/**
+  In England the currency is made up of pound, F, and pence, p, and there are
+    eight coins in general circulation:
+
+    1p, 2p, 5p, 10p, 20p, 50p, F1 (100p) and F2 (200p).
+
+  It is possible to make F2 in the following way:
+    1*F1 + 1*50p + 2*20p + 1*5p + 1*2p + 3*1p
+
+  How many different ways can F2 be made using any number of coins?
 */
-object Problem0024 extends Solveable{
-  val NUMBER = 24
+
+object Problem0031 extends Solveable{
+  val NUMBER = 31
 
   def solve() = {
-
-    def permute( list: Array[Char] ){
-
-      @tailrec
-      def maxAsc( pos: Int, max: Int ) = {
-
-      }
-
-      for( k <- 0 until list.length - 1 ){
-        if ( list(k) < list(k + 1) ){
-
-        }
-      }
-    }
-
-    permute( "0123456789".toCharArray )
-
-    val res = "?"
+    val res = ""
     String.valueOf( res )
   }
 }
