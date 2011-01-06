@@ -19,8 +19,12 @@ object Problem0034 extends Solveable{
 
   def solve() = {
 
-    
-    
+    (1 to 9).map{ n =>
+
+      println( Problem0015.fact(n) )
+
+    }
+
     val res = "?"
     String.valueOf( res )
   }

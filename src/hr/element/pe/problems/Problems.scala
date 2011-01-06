@@ -714,7 +714,12 @@ object Problem0014 extends Solveable{
 object Problem0015 extends Solveable{
   val NUMBER = 15
 
-  def fact( k: Int ) = BigInt(1) to k product
+  def calcFact( last: BigInt, index: Int ):Stream[BigInt] = {
+    val cur = last * index
+    cur #:: fact( cur, index+1 )
+  }
+
+  lazy val fact = 1 #:: calcFact( 1, 1 )
   def binCoef( n: Int, k: Int ) = fact( n ) / ( fact( k ) * fact( n - k ) )
 
   def solve() = {
