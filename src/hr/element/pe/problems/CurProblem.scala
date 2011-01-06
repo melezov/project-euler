@@ -6,22 +6,22 @@ import hr.element.pe.Solveable
 import scala.collection.mutable.HashMap
 
 /**
-  In England the currency is made up of pound, F, and pence, p, and there are
-    eight coins in general circulation:
+  145 is a curious number, as
+    1! + 4! + 5! = 1 + 24 + 120 = 145.
 
-    1p, 2p, 5p, 10p, 20p, 50p, F1 (100p) and F2 (200p).
+  Find the sum of all numbers which are equal to the sum of the factorial of
+    their digits.
 
-  It is possible to make F2 in the following way:
-    1*F1 + 1*50p + 2*20p + 1*5p + 1*2p + 3*1p
-
-  How many different ways can F2 be made using any number of coins?
+  Note: as 1! = 1 and 2! = 2 are not sums they are not included.
 */
-
-object Problem0031 extends Solveable{
-  val NUMBER = 31
+object Problem0034 extends Solveable{
+  val NUMBER = 34
 
   def solve() = {
-    val res = ""
+
+    
+    
+    val res = "?"
     String.valueOf( res )
   }
 }

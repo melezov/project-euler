@@ -1486,3 +1486,115 @@ object Problem0030 extends Solveable{
     String.valueOf( res )
   }
 }
+
+/**
+  In England the currency is made up of pound, F, and pence, p, and there are
+    eight coins in general circulation:
+
+    1p, 2p, 5p, 10p, 20p, 50p, F1 (100p) and F2 (200p).
+
+  It is possible to make F2 in the following way:
+    1*F1 + 1*50p + 2*20p + 1*5p + 1*2p + 3*1p
+
+  How many different ways can F2 be made using any number of coins?
+*/
+
+object Problem0031 extends Solveable{
+  val NUMBER = 31
+
+  def solve() = {
+
+    val coins = List( 1, 2, 5, 10, 20, 50, 100, 200 )
+
+    def fiddleChange( unresolvedCoins: List[Int], remainingSum: Int ):Int = {
+      unresolvedCoins match {
+        case cur :: rest =>
+          cur match {
+            case x if x == remainingSum =>
+              1
+            case x if x > remainingSum =>
+              0
+            case _ =>
+              fiddleChange( unresolvedCoins, remainingSum - cur ) +
+              fiddleChange( rest, remainingSum )
+          }
+        case _ =>
+          0
+      }
+    }
+
+    val res = fiddleChange( coins, 200 )
+    String.valueOf( res )
+  }
+}
+
+/**
+  We shall say that an n-digit number is pandigital if it makes use of all the
+    digits 1 to n exactly once; for example, the 5-digit number, 15234, is 1
+    through 5 pandigital.
+
+  The product 7254 is unusual, as the identity, 39 * 186 = 7254, containing
+    multiplicand, multiplier, and product is 1 through 9 pandigital.
+
+  Find the sum of all products whose multiplicand/multiplier/product identity
+    can be written as a 1 through 9 pandigital.
+
+  HINT: Some products can be obtained in more than one way so be sure to only
+    include it once in your sum.
+*/
+object Problem0032 extends Solveable{
+  val NUMBER = 32
+
+  def solve() = {
+
+    def findPanDigitals( digits: String ) = {
+      (2 to 9999).flatMap{ x =>
+        (2 to 9999/x).view.filter{ y =>
+          val xyz = "%d%d%d".format( x, y, x*y )
+          ( xyz.length == digits.length ) &&
+            ( xyz.toList.sortBy(identity).mkString == digits )
+        }.map(x*_)
+      }.distinct.sum
+    }
+
+    val res = findPanDigitals( "123456789" )
+    String.valueOf( res )
+  }
+}
+
+/**
+  The fraction 49/98 is a curious fraction, as an inexperienced mathematician in
+    attempting to simplify it may incorrectly believe that 49/98 = 4/8, which is
+    correct, is obtained by cancelling the 9s.
+
+  We shall consider fractions like, 30/50 = 3/5, to be trivial examples.
+  There are exactly four non-trivial examples of this type of fraction, less
+    than one in value, and containing two digits in the numerator and
+    denominator.
+
+  If the product of these four fractions is given in its lowest common terms,
+    find the value of the denominator.
+*/
+
+object Problem0033 extends Solveable{
+  val NUMBER = 33
+
+  def solve() = {
+
+    def findDenominatorOfCuriousFractions() = {
+
+      val nd = (for ( n <- 1 to 8; d <- n+1 to 9;
+            nx <- 10 to 98; dx <- nx+1 to 99;
+            m <- 1 to 9 if ( n * dx == d * nx ) &&
+             ( n.toString == nx.toString.replace( m.toString, "" ) ) &&
+             ( d.toString == dx.toString.replace( m.toString, "" ) )
+          ) yield ( n, d )
+      ).reduceLeft{(nd1,nd2)=>(nd1._1 * nd2._1, nd1._2 *  nd2._2)}
+
+      nd._2 / nd._1
+    }
+
+    val res = findDenominatorOfCuriousFractions()
+    String.valueOf( res )
+  }
+}
