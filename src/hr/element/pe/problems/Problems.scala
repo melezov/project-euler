@@ -716,7 +716,7 @@ object Problem0015 extends Solveable{
 
   def calcFact( last: BigInt, index: Int ):Stream[BigInt] = {
     val cur = last * index
-    cur #:: fact( cur, index+1 )
+    cur #:: calcFact( cur, index+1 )
   }
 
   lazy val fact = 1 #:: calcFact( 1, 1 )
@@ -1316,15 +1316,15 @@ object Problem0026 extends Solveable{
 object Problem0027 extends Solveable{
   val NUMBER = 27
 
+  def isPrime( p: Int ) = p match {
+    case x if ( p < 2 ) => false
+    case x => Problem0005.getPrimCount( x ).head._1 == x
+  }
+
   def solve() = {
 
     def polyStream( a: Int, b: Int, n: Int = 0 ):Stream[Int] = {
       ( n*n + a*n + b ) #:: polyStream( a, b, n+1 )
-    }
-
-    def isPrime( p: Int ) = p match {
-      case x if ( p < 2 ) => false
-      case x => Problem0005.getPrimCount( x ).head._1 == x
     }
 
     def findABParams( limit: Int ) = {
@@ -1600,6 +1600,42 @@ object Problem0033 extends Solveable{
     }
 
     val res = findDenominatorOfCuriousFractions()
+    String.valueOf( res )
+  }
+}
+
+/**
+  145 is a curious number, as
+    1! + 4! + 5! = 1 + 24 + 120 = 145.
+
+  Find the sum of all numbers which are equal to the sum of the factorial of
+    their digits.
+
+  Note: as 1! = 1 and 2! = 2 are not sums they are not included.
+*/
+object Problem0034 extends Solveable{
+  val NUMBER = 34
+
+  def solve() = {
+
+    val f09 = Vector.empty ++ Problem0015.fact.take(10).map(_.toInt)
+
+    def calcDigitFactSum( x: BigInt ) = {
+      x.toString.toList.map(d=>f09(d.asDigit)).sum
+    }
+
+    def findLimit( length: Int ):BigInt = {
+      val test = BigInt(f09(9)) * length
+
+      if ( test.toString.length < length ){
+        test
+      }
+      else{
+        findLimit( length + 1 )
+      }
+    }
+
+    val res = (for ( i <- BigInt(3) to findLimit( 0 ) if i == calcDigitFactSum( i ) ) yield i).sum
     String.valueOf( res )
   }
 }
