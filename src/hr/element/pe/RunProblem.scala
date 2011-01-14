@@ -13,7 +13,7 @@ import hr.element.pe.problems._
 
 object RunProblem{
   def main( args: Array[String] ) {
-    println( Problem0035.solve() )
+    println( Problem0036.solve() )
   }
 }
 
@@ -25,6 +25,56 @@ import hr.element.pe.Solveable
 
 import scala.collection.immutable.ListSet
 import scala.collection.mutable.HashMap
+
+/**
+  The decimal number, 585 = 10010010012 (binary), is palindromic in both bases.
+
+  Find the sum of all numbers, less than one million, which are palindromic in
+    base 10 and base 2.
+
+  (Please note that the palindromic number, in either base, may not include
+    leading zeros.)
+*/
+object Problem0036 extends Solveable{
+  val NUMBER = 36
+
+  def solve() = {
+     val res = (BigInt(1) until 1000000).view.filter(n=>{
+       val s10 = n.toString
+       (s10.reverse == s10) && {
+         val s2 = n.toString(2)
+         s2.reverse == s2
+       }
+     }).sum
+
+    String.valueOf( res )
+  }
+}
+
+/**
+  The decimal number, 585 = 10010010012 (binary), is palindromic in both bases.
+
+  Find the sum of all numbers, less than one million, which are palindromic in
+    base 10 and base 2.
+
+  (Please note that the palindromic number, in either base, may not include
+    leading zeros.)
+*/
+object Problem0036 extends Solveable{
+  val NUMBER = 36
+
+  def solve() = {
+     val res = (BigInt(1) until 1000000).view.filter(n=>{
+       val s10 = n.toString
+       (s10.reverse == s10) && {
+         val s2 = n.toString(2)
+         s2.reverse == s2
+       }
+     }).sum
+
+    String.valueOf( res )
+  }
+}
 
 /**
   The number, 197, is called a circular prime because all rotations of the

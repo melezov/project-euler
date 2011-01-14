@@ -108,10 +108,13 @@ object Problem0004 extends Solveable{
 
   def solve() = {
 
-    def numPal( p: Long ) = p.toString == p.toString.reverse
+    def numPal( p: Long ) = {
+      val s = p.toString
+      s.reverse == s
+    }
 
-    def findMaxPal( from: Int, to: Int ) = {
-      val rng = from to to
+    def findMaxPal( start: Int, end: Int ) = {
+      val rng = start to end
       ( for( x <- rng; y <- rng if numPal( x * y ) ) yield x * y ) max
     }
 
@@ -305,14 +308,16 @@ object Problem0010 extends Solveable{
 
   def solve() = {
 
-    def sumPrimes( limit: Int ) = {
-      val primes = ((for (i<-0 until limit) yield i) toArray)
+    import scala.collection.mutable.BitSet
 
-      for( cur <- 2 until limit if ( primes(cur) != 0 )){
-        for( es <- cur + cur until limit by cur ) primes( es ) = 0
+    def sumPrimes( limit: Int ) = {
+      val primes = new BitSet() ++ (2 until limit)
+
+      for( cur <- 2 until math.sqrt( limit ).toInt+1 if ( primes.contains(cur) )){
+        for( es <- ( cur << 1 ) until limit by cur ) primes -= es
       }
 
-      ( 0L /: primes ){_+_} - 1 // compensation for non-prime "1"
+      ( 0L /: primes ){_+_}
     }
 
     val res = sumPrimes( 2000000 )
