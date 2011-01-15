@@ -7,6 +7,7 @@ import org.scalatest.matchers.MustMatchers
 import hr.element.pe.problems._
 
 class ProblemSuite extends Suite with MustMatchers{
+
   def test0001() {
     Problem0001.solve() must equal ("233168")
   }
@@ -110,16 +111,25 @@ class ProblemSuite extends Suite with MustMatchers{
     Problem0034.solve() must equal ("40730")
   }
   def test0035() {
-    Problem0035.solve() must equal ("443839")
+    Problem0035.solve() must equal ("55")
   }
   def test0036() {
     Problem0036.solve() must equal ("872187")
   }
   def test0037() {
-    Problem0037.solve() must equal ("res")
+    Problem0037.solve() must equal ("748317")
   }
   def test0038() {
-    Problem0037.solve() must equal ("res")
+    Problem0038.solve() must equal ("932718654")
+  }
+  def test0039() {
+    Problem0039.solve() must equal ("840")
+  }
+  def test0040() {
+    Problem0040.solve() must equal ("210")
+  }
+  def test0041() {
+    Problem0041.solve() must equal ("?")
   }
 }
 
@@ -127,7 +137,7 @@ object TestProblems{
   def main( args: Array[String] ) {
     val ps = new ProblemSuite
 
-    for ( i <- 10 to 10 ){
+    for ( i <- 40 to 40 ){
       val oldTime = System.currentTimeMillis
       ps.execute("test%04d" format i )
       val newTime = System.currentTimeMillis

@@ -13,7 +13,7 @@ import hr.element.pe.problems._
 
 object RunProblem{
   def main( args: Array[String] ) {
-    println( Problem0036.solve() )
+    println( Problem0041.solve() )
   }
 }
 
@@ -26,5 +26,16 @@ import hr.element.pe.Solveable
 import scala.collection.immutable.ListSet
 import scala.collection.mutable.HashMap
 
+/**
+ */
+object Problem0041 extends Solveable{
+  val NUMBER = 41
+
+  def solve() = {
+
+    val res = "?"
+    String.valueOf( res )
+  }
+}
 
 }

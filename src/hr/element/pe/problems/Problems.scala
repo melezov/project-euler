@@ -2,7 +2,7 @@ package hr.element.pe.problems
 
 import scala.annotation.tailrec
 import scala.collection.mutable.{ArrayBuffer, HashMap}
-import scala.collection.immutable.{Vector, ListMap}
+import scala.collection.immutable.{Vector}
 
 import org.joda.time.{LocalDate, DateTimeConstants}
 
@@ -129,6 +129,7 @@ object Problem0004 extends Solveable{
   What is the smallest positive number that is evenly divisible by all of the
     numbers from 1 to 20?
 */
+
 object Problem0005 extends Solveable{
   val NUMBER = 5
 
@@ -145,8 +146,7 @@ object Problem0005 extends Solveable{
       }
     }
 
-    ListMap.empty ++ getPrim( num, 2 ).groupBy( identity )
-      .mapValues( _.length ).toList.sortBy( _._1 )
+    Map.empty ++ getPrim( num, 2 ).groupBy( identity ).mapValues( _.length )
   }
 
   def solve() = {
@@ -306,16 +306,15 @@ object Problem0009 extends Solveable{
 object Problem0010 extends Solveable{
   val NUMBER = 10
 
-  def getPrimes( limit: Int ):Set[Int] = {
+  def getPrimes( limit: Int ):scala.collection.BitSet = {
     import scala.collection.mutable.BitSet
-
     val primes = new BitSet() ++ (2 until limit)
 
     for( cur <- 2 until math.sqrt( limit ).toInt+1 if ( primes.contains(cur) )){
       for( es <- ( cur << 1 ) until limit by cur ) primes -= es
     }
 
-    primes.toSet
+    primes
   }
 
   def solve() = {
@@ -706,8 +705,7 @@ object Problem0014 extends Solveable{
           resolveChainJump( 3 * x + 1, len + 1 )
       }
 
-      (1 until limit).view.map( n=> n -> resolveChainJump( n, 0 ) )
-        .reduceLeft( ( c1, c2 ) => if ( c1._2 > c2._2 ) c1 else c2 )._1
+      (1 until limit).view.map( n=> resolveChainJump( n, 0 )->n ).max._2
     }
 
     val res = getMaxChainLength( 1000000 )
@@ -1322,6 +1320,7 @@ object Problem0026 extends Solveable{
     that produces the maximum number of primes for consecutive values of n,
     starting with n = 0.
 */
+
 object Problem0027 extends Solveable{
   val NUMBER = 27
 
@@ -1357,10 +1356,10 @@ object Problem0027 extends Solveable{
       val rng = 1-limit to limit-1
 
       val maxCombination = (for( b <- rng if ( cachedPrimeCheck( b ) ); a <- rng if ( cachedPrimeCheck( a + b + 1 ) ) ) yield {
-        (a,b,getMaxConsPrimes( a, b ))
-      }).reduceLeft{ (ab1,ab2) => if ( ab1._3 >= ab2._3 ) ab1 else ab2 }
+        (getMaxConsPrimes( a, b ),a,b)
+      }).max
 
-      maxCombination._1 * maxCombination._2
+      maxCombination._2 * maxCombination._3
     }
 
 
@@ -1556,18 +1555,23 @@ object Problem0031 extends Solveable{
   HINT: Some products can be obtained in more than one way so be sure to only
     include it once in your sum.
 */
+
 object Problem0032 extends Solveable{
   val NUMBER = 32
+
+  val panDigits = 1 to 9 mkString
+
+  def isPandigital( nS: String ) = {
+    ( nS.length == panDigits.length ) &&
+    ( nS.toList.sortBy(identity).mkString == panDigits )
+  }
 
   def solve() = {
 
     def findPanDigitals( digits: String ) = {
       (2 to 9999).flatMap{ x =>
         (2 to 9999/x).view.filter{ y =>
-          val xyz = "%d%d%d".format( x, y, x*y )
-          ( xyz.length == digits.length ) &&
-            ( xyz.toList.sortBy(identity).mkString == digits )
-        }.map(x*_)
+          isPandigital( "%d%d%d".format( x, y, x*y ) ) }.map(x*_)
       }.distinct.sum
     }
 
@@ -1603,7 +1607,7 @@ object Problem0033 extends Solveable{
              ( n.toString == nx.toString.replace( m.toString, "" ) ) &&
              ( d.toString == dx.toString.replace( m.toString, "" ) )
           ) yield ( n, d )
-      ).reduceLeft{(nd1,nd2)=>(nd1._1 * nd2._1, nd1._2 *  nd2._2)}
+      ).reduceLeft{(nd1,nd2)=>(nd1._1 * nd2._1, nd1._2 * nd2._2)}
 
       nd._2 / nd._1
     }
@@ -1668,29 +1672,15 @@ object Problem0035 extends Solveable{
       cur #:: rot(cur)
     }
 
-    def getPrimes( limit: Int ) = {
-      val primes = (0 until limit toArray)
-      primes(1) = 0
-
-      for ( i <- 2 until ( limit >> 1 ) ){
-        val cur = primes(i)
-        if ( cur != 0 ){
-          for ( r <- ( cur << 1 ) until limit by cur ){
-            primes(r) = 0
-          }
-        }
-      }
-
-      primes.filter(_!=0).toSet
-    }
-
     def findCircularPrimes( limit: Int ) = {
-      val primes = getPrimes( limit )
-      println( primes )
-      0
+      val primes = Problem0010.getPrimes( limit )
+      primes.count{ n =>
+        val cur = n.toString
+        rot( cur ).view.take( cur.length ).map(_.toInt).forall(primes.contains(_))
+      }
     }
 
-    val res = findCircularPrimes( 100 )
+    val res = findCircularPrimes( 1000000 )
     String.valueOf( res )
   }
 }
@@ -1700,12 +1690,6 @@ object Problem0035 extends Solveable{
 
   Find the sum of all numbers, less than one million, which are palindromic in
     base 10 and base 2.
- /*
-      primes.count{ n =>
-        val cur = n.toString
-        rot( cur ).view.take( cur.length ).map(_.toInt).forall(primes.contains(_))
-      }
- */
 
   (Please note that the palindromic number, in either base, may not include
     leading zeros.)
@@ -1713,27 +1697,182 @@ object Problem0035 extends Solveable{
 object Problem0036 extends Solveable{
   val NUMBER = 36
 
-  def solve() = {
-     val res = (BigInt(1) until 1000000).view.filter(n=>{
-       val s10 = n.toString
-       (s10.reverse == s10) && {
-         val s2 = n.toString(2)
-         s2.reverse == s2
-       }
-     }).sum
+  def findPalindroms( limit: Int ) = {
+   (1 until 1000000).view.filter(n=>{
+     val s10 = n.toString
+     (s10.reverse == s10) && {
+       val s2 = BigInt(n).toString(2)
+       s2.reverse == s2
+     }
+   }).sum
+  }
 
+  def solve() = {
+
+    val res = findPalindroms( 1000000 )
     String.valueOf( res )
   }
 }
 
 /**
+  The number 3797 has an interesting property. Being prime itself, it is
+    possible to continuously remove digits from left to right, and remain prime
+    at each stage: 3797, 797, 97, and 7. Similarly we can work from right to
+    left: 3797, 379, 37, and 3.
+
+  Find the sum of the only eleven primes that are both truncatable from left to
+    right and right to left.
+
+  NOTE: 2, 3, 5, and 7 are not considered to be truncatable primes.
 */
 object Problem0037 extends Solveable{
   val NUMBER = 37
 
   def solve() = {
 
-    val res = "res"
+    def isPrimeTruncatable( n: Int ) = {
+      val nS = n.toString
+      val len = nS.length
+      val pad = List.fill(len-1){""}
+
+      (pad ::: nS.toList.map(_.toString) ::: pad).
+        sliding( len ).
+        map( _.mkString.toInt ).
+        forall( Problem0027.isPrime )
+    }
+
+    @tailrec
+    def findTruncatablePrimesFrom( cur: Int, limit: Int, found: List[Int] = Nil ): List[Int] = {
+      val primes = Problem0010.getPrimes( cur << 1 ).filter( p => ( p >= cur ) && isPrimeTruncatable( p ) ).toList
+      val truncs = primes ::: found
+      if ( truncs.size >= limit ){
+        truncs
+      }
+      else{
+        findTruncatablePrimesFrom( cur << 1, limit, truncs )
+      }
+    }
+
+    val res = findTruncatablePrimesFrom( 11, 11 ).sum
     String.valueOf( res )
   }
 }
+
+/**
+  Take the number 192 and multiply it by each of 1, 2, and 3:
+
+  192 * 1 = 192
+  192 * 2 = 384
+  192 * 3 = 576
+
+  By concatenating each product we get the 1 to 9 pandigital, 192384576. We will
+    call 192384576 the concatenated product of 192 and (1,2,3)
+
+  The same can be achieved by starting with 9 and multiplying by 1, 2, 3, 4, and
+    5, giving the pandigital, 918273645, which is the concatenated product of 9
+    and (1,2,3,4,5).
+
+  What is the largest 1 to 9 pandigital 9-digit number that can be formed as the
+    concatenated product of an integer with (1,2, ... , n) where n > 1?
+ */
+object Problem0038 extends Solveable{
+  val NUMBER = 38
+
+  def solve() = {
+
+    @tailrec
+    def buildConcatProduct( base: Int, n: Int = 1, cur: String = "" ): Option[Int] = {
+      if ( cur.length > 9 ){
+        None
+      }
+      else{
+        val ncp = cur + base * n
+        if ( Problem0032.isPandigital( ncp ) ){
+          Some( ncp.toInt )
+        }
+        else{
+          buildConcatProduct( base, n+1, ncp )
+        }
+      }
+    }
+
+    def findMaxPandigital() = {
+      (1 to 9999).view.map(buildConcatProduct(_)).filter(_.isDefined).map(_.get).max
+    }
+
+    val res = findMaxPandigital()
+    String.valueOf( res )
+  }
+}
+
+/**
+  If p is the perimeter of a right angle triangle with integral length sides,
+    {a,b,c}, there are exactly three solutions for p = 120.
+
+  {20,48,52}, {24,45,51}, {30,40,50}
+
+  For which value of p <= 1000, is the number of solutions maximised?
+ */
+object Problem0039 extends Solveable{
+  val NUMBER = 39
+
+  def solve() = {
+
+    def getRightTriangleSolutionCount( p: Int ) = {
+      (1 to p >> 1).map{ a =>
+        (a to p >> 1).count{ b =>
+          val c = p - a - b
+          a*a + b*b == c*c
+        }
+      }.sum
+    }
+
+    def findMaxRightTriangleSolutions( limit: Int ) = {
+      (12 to 1000).map(n=>getRightTriangleSolutionCount(n)->n).max._2
+    }
+
+    val res = findMaxRightTriangleSolutions( 1000 )
+    String.valueOf( res )
+  }
+}
+
+/**
+  An irrational decimal fraction is created by concatenating the positive
+    integers:
+
+    0.12345678910[1]112131415161718192021...
+
+  It can be seen that the 12th digit of the fractional part is 1.
+  If d(n) represents the n-th digit of the fractional part, find the value of the
+    following expression.
+
+  d(1) * d(10) * d(100) * d(1000) * d(10000) * d(100000) * d(1000000)
+ */
+object Problem0040 extends Solveable{
+  val NUMBER = 40
+
+  def solve() = {
+
+    def findDigitsProduct( digits: Int* ) = {
+      val max = digits.max
+
+      @tailrec
+      def buildDigits( cur: Int, sb: StringBuilder ): String = {
+        if ( sb.length <= max ){
+          sb.append( cur )
+          buildDigits( cur+1, sb )
+        }
+        else{
+          sb.result
+        }
+      }
+
+      val str = buildDigits( 1, new StringBuilder(max,".") )
+      digits.map( str(_).asDigit ).product
+    }
+
+    val res = findDigitsProduct( 1, 10, 100, 1000, 10000, 100000, 1000000 )
+    String.valueOf( res )
+  }
+}
+
