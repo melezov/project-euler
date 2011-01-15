@@ -1116,59 +1116,83 @@ object Problem0023 extends Solveable{
 object Problem0024 extends Solveable{
   val NUMBER = 24
 
-  def solve() = {
-
-    def permute( list: Array[Char], cycles: Int ):Array[Char] = {
-      @tailrec
-      def maxAsc( cur: Int, max: Int, last:Option[Int] ):Option[Int] = {
-        if ( cur >= max - 1 ){
-          last
-        }
-        else if ( list(cur) < list(cur + 1) ){
-          maxAsc( cur + 1, max, Some( cur ) )
-        }
-        else{
-          maxAsc( cur + 1, max, last )
-        }
+  def permute( list: Array[Char], cycles: Int ): Array[Char] = {
+    @tailrec
+    def maxAsc( cur: Int, max: Int, last:Option[Int] ):Option[Int] = {
+      if ( cur >= max - 1 ){
+        last
       }
-
-      @tailrec
-      def maxUp( start: Int, cur: Int, max: Int, last: Int ): Int = {
-        if ( cur >= max ){
-          last
-        }
-        else if ( list(start) < list(cur) ){
-          maxUp( start, cur + 1, max, cur )
-        }
-        else{
-          maxUp( start, cur + 1, max, last )
-        }
+      else if ( list(cur) < list(cur + 1) ){
+        maxAsc( cur + 1, max, Some( cur ) )
       }
-
-      cycles match {
-        case 0 =>
-          list
-        case c =>
-          val newList = maxAsc( 0, list.length, None ) match {
-            case None =>
-              error("Next permutation is not possible!")
-            case Some( k ) =>
-              val l = maxUp( k, k + 2, list.length, k + 1 )
-
-              val z = list(k)
-              list(k) = list(l)
-              list(l) = z
-
-              val pp = list.toList.splitAt( k + 1 )
-              val nl = pp._1 ::: pp._2.reverse
-              nl.toArray
-          }
-
-          permute( newList, c - 1 )
+      else{
+        maxAsc( cur + 1, max, last )
       }
     }
 
-    val res = permute( "0123456789".toCharArray, 999999 )
+    @tailrec
+    def maxUp( start: Int, cur: Int, max: Int, last: Int ): Int = {
+      if ( cur >= max ){
+        last
+      }
+      else if ( list(start) < list(cur) ){
+        maxUp( start, cur + 1, max, cur )
+      }
+      else{
+        maxUp( start, cur + 1, max, last )
+      }
+    }
+
+    def swapElements( first: Int, second: Int ) = {
+      val tmp = list(first)
+      list(first) = list(second)
+      list(second) = tmp
+    }
+
+    @tailrec
+    def reverseElements( start: Int, end: Int ){
+      if ( start < end ){
+        swapElements( start, end )
+        reverseElements( start+1, end-1 )
+      }
+    }
+
+    cycles match {
+      case 0 =>
+        list
+      case c =>
+        maxAsc( 0, list.length, None ) match {
+          case None =>
+            error("Next permutation is not possible!")
+          case Some( k ) =>
+            val l = maxUp( k, k + 2, list.length, k + 1 )
+
+            swapElements( k, l )
+            reverseElements( k+1, list.length-1 )
+        }
+
+        permute( list, c - 1 )
+    }
+  }
+
+  def solve() = {
+
+    var x = (0 to 9).mkString.toCharArray
+
+    (1 to 1).foreach{n=>
+
+      x=permute( x, 2999999 )
+
+
+     // println( x.mkString )
+    }
+
+
+
+
+
+    val res = x mkString
+
     String.valueOf( res )
   }
 }
