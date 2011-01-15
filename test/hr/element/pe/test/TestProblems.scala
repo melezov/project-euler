@@ -78,7 +78,7 @@ class ProblemSuite extends Suite with MustMatchers{
     Problem0023.solve() must equal ("4179871")
   }
   def test0024() {
-    Problem0024.solve() must equal ("8241697530") //2783915460")
+    Problem0024.solve() must equal ("2783915460")
   }
   def test0025() {
     Problem0025.solve() must equal ("4782")
@@ -129,7 +129,10 @@ class ProblemSuite extends Suite with MustMatchers{
     Problem0040.solve() must equal ("210")
   }
   def test0041() {
-    Problem0041.solve() must equal ("?")
+    Problem0041.solve() must equal ("7652413")
+  }
+  def test0042() {
+    Problem0042.solve() must equal ("?")
   }
 }
 

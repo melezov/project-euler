@@ -1116,30 +1116,33 @@ object Problem0023 extends Solveable{
 object Problem0024 extends Solveable{
   val NUMBER = 24
 
-  def permute( list: Array[Char], cycles: Int ): Array[Char] = {
+  def permute( body: String ): Stream[String] = {
+    val list = body.toCharArray
+    val len = list.length
+
     @tailrec
-    def maxAsc( cur: Int, max: Int, last:Option[Int] ):Option[Int] = {
-      if ( cur >= max - 1 ){
+    def maxAsc( cur: Int, last:Option[Int] ):Option[Int] = {
+      if ( cur >= len - 1 ){
         last
       }
       else if ( list(cur) < list(cur + 1) ){
-        maxAsc( cur + 1, max, Some( cur ) )
+        maxAsc( cur + 1, Some( cur ) )
       }
       else{
-        maxAsc( cur + 1, max, last )
+        maxAsc( cur + 1, last )
       }
     }
 
     @tailrec
-    def maxUp( start: Int, cur: Int, max: Int, last: Int ): Int = {
-      if ( cur >= max ){
+    def maxUp( start: Int, cur: Int, last: Int ): Int = {
+      if ( cur >= len ){
         last
       }
       else if ( list(start) < list(cur) ){
-        maxUp( start, cur + 1, max, cur )
+        maxUp( start, cur + 1, cur )
       }
       else{
-        maxUp( start, cur + 1, max, last )
+        maxUp( start, cur + 1, last )
       }
     }
 
@@ -1157,42 +1160,23 @@ object Problem0024 extends Solveable{
       }
     }
 
-    cycles match {
-      case 0 =>
-        list
-      case c =>
-        maxAsc( 0, list.length, None ) match {
-          case None =>
-            error("Next permutation is not possible!")
-          case Some( k ) =>
-            val l = maxUp( k, k + 2, list.length, k + 1 )
+    body #:: (
+      maxAsc( 0, None ) match {
+        case None =>
+          Stream.empty
+        case Some( k ) =>
+          val l = maxUp( k, k + 2, k + 1 )
 
-            swapElements( k, l )
-            reverseElements( k+1, list.length-1 )
-        }
+          swapElements( k, l )
+          reverseElements( k+1, len-1 )
 
-        permute( list, c - 1 )
-    }
+          permute( new String( list ) )
+      }
+    )
   }
 
   def solve() = {
-
-    var x = (0 to 9).mkString.toCharArray
-
-    (1 to 1).foreach{n=>
-
-      x=permute( x, 2999999 )
-
-
-     // println( x.mkString )
-    }
-
-
-
-
-
-    val res = x mkString
-
+    val res = permute( "0123456789" ).drop(999999).head
     String.valueOf( res )
   }
 }
@@ -1900,3 +1884,33 @@ object Problem0040 extends Solveable{
   }
 }
 
+/**
+  We shall say that an n-digit number is pandigital if it makes use of all the
+    digits 1 to n exactly once. For example, 2143 is a 4-digit pandigital and is
+    also prime.
+
+  What is the largest n-digit pandigital prime that exists?
+ */
+object Problem0041 extends Solveable{
+  val NUMBER = 41
+
+  def solve() = {
+
+    def seekMaxPrimePermutations( n: Int ):Option[Int] = {
+
+      val primes = Problem0010.getPrimes( "1"+"0"*n toInt )
+      val digits = 1 to n mkString
+      val rev = (n.toString*n toInt) + ("1"*n toInt)
+
+      Problem0024.permute( digits ).
+        map( rev-_.toInt ).
+        find( primes )
+    }
+
+    // 1+2+..+9 % 9 = 0
+    // 1+2+..+8 % 8 = 0
+
+    val res = (7 to 4 by -1).view.map( seekMaxPrimePermutations ).find(_.isDefined).get.get
+    String.valueOf( res )
+  }
+}
