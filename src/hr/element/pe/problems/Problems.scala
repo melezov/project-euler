@@ -1033,19 +1033,24 @@ object Problem0021 extends Solveable{
 object Problem0022 extends Solveable{
   val NUMBER = 22
 
+  private val wordPattern = "^\"([A-Z]+)\"$".r
+  def readWords( path: String ) = {
+    FileUtils.readFileToString( new File( path ) )
+    .split(',')
+    .toList
+    .map( wordPattern.replaceFirstIn( _, "$1" ) )
+  }
+
+  def wordValue( w: String ) = {
+    w.map( _ - 'A'+1 ).sum
+  }
+
   def solve() = {
 
-    val namePattern = "^\"([A-Z]+)\"$".r
-
-    val names =
-      FileUtils.readFileToString( new File( "res/Problem0022/names.txt" ) )
-      .split(',')
-      .toList
-      .map( namePattern.replaceFirstIn( _, "$1" ) )
-      .sortBy(identity)
+    val names = readWords( "res/Problem0022/names.txt" ).sortBy(identity)
 
     def wordEval( word: String, pos: Int ) = {
-      word.map( _ - 'A' + 1 ).sum * pos
+      wordValue( word ) * pos
     }
 
     val res = names.view.zipWithIndex
@@ -1911,6 +1916,78 @@ object Problem0041 extends Solveable{
     // 1+2+..+8 % 8 = 0
 
     val res = (7 to 4 by -1).view.map( seekMaxPrimePermutations ).find(_.isDefined).get.get
+    String.valueOf( res )
+  }
+}
+
+/**
+  The n-th term of the sequence of triangle numbers is given by,
+    t(n) = n(n+1)/2; so the first ten triangle numbers are:
+
+  1, 3, 6, 10, 15, 21, 28, 36, 45, 55, ...
+
+  By converting each letter in a word to a number corresponding to its
+    alphabetical position and adding these values we form a word value. For
+    example, the word value for SKY is 19 + 11 + 25 = 55 = t(10). If the word
+    value is a triangle number then we shall call the word a triangle word.
+
+  Using words.txt, a 16K text file containing nearly two-thousand common English
+    words, how many are triangle words?
+*/
+object Problem0042 extends Solveable{
+  val NUMBER = 42
+
+  def solve() = {
+
+    def triangle( n: Int ): Stream[Int] = {
+      ( n * (n + 1) >> 1 ) #:: triangle( n + 1 )
+    }
+
+    def countTriangleWords() = {
+      val words = Problem0022.readWords( "res/Problem0042/words.txt" )
+      val values = words.map( Problem0022.wordValue )
+      val maxVal = values.max
+      val triSet = triangle( 1 ).takeWhile( _ < maxVal ).toSet
+      values.count( triSet )
+    }
+
+    val res = countTriangleWords()
+    String.valueOf( res )
+  }
+}
+
+/**
+  The number, 1406357289, is a 0 to 9 pandigital number because it is made up of
+    each of the digits 0 to 9 in some order, but it also has a rather
+    interesting sub-string divisibility property.
+
+  Let d(1) be the 1st digit, d(2) be the 2nd digit, and so on. In this way, we
+    note the following:
+
+  d(2)d(3)d( 4)=406 is divisible by 2
+  d(3)d(4)d( 5)=063 is divisible by 3
+  d(4)d(5)d( 6)=635 is divisible by 5
+  d(5)d(6)d( 7)=357 is divisible by 7
+  d(6)d(7)d( 8)=572 is divisible by 11
+  d(7)d(8)d( 9)=728 is divisible by 13
+  d(8)d(9)d(10)=289 is divisible by 17
+
+  Find the sum of all 0 to 9 pandigital numbers with this property.
+*/
+object Problem0043 extends Solveable{
+  val NUMBER = 43
+
+  def solve() = {
+
+    def sumPandigitals() = {
+      val primes = Problem0010.getPrimes(18).toSeq.sortBy(identity)
+
+      Problem0024.permute( 0 to 9 mkString ).filter(
+        _.sliding(3).drop( 1 ).zip( primes.iterator ).forall( n => n._1.toInt % n._2 == 0 )
+      ).map(_.toLong).sum
+    }
+
+    val res = sumPandigitals()
     String.valueOf( res )
   }
 }
