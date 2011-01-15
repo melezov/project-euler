@@ -116,10 +116,10 @@ class ProblemSuite extends Suite with MustMatchers{
     Problem0036.solve() must equal ("872187")
   }
   def test0037() {
-    Problem0035.solve() must equal ("443839")
+    Problem0037.solve() must equal ("res")
   }
   def test0038() {
-    Problem0035.solve() must equal ("443839")
+    Problem0037.solve() must equal ("res")
   }
 }
 
@@ -127,7 +127,7 @@ object TestProblems{
   def main( args: Array[String] ) {
     val ps = new ProblemSuite
 
-    for ( i <- 36 to 36 ){
+    for ( i <- 10 to 10 ){
       val oldTime = System.currentTimeMillis
       ps.execute("test%04d" format i )
       val newTime = System.currentTimeMillis
